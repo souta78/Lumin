@@ -1,0 +1,99 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local Window = Rayfield:CreateWindow({
+    Name = "Lumin",
+    LoadingTitle = "Loading...",
+    LoadingSubtitle = "by Lumin",
+    ConfigurationSaving = {
+        Enabled = true,
+        FolderName = nil,
+        FileName = "LuminSimple"
+    },
+    KeySystem = false
+})
+
+local MainTab = Window:CreateTab("Main", 4483362458)
+
+getgenv().InfiniteJumpEnabled = false
+
+game:GetService("UserInputService").JumpRequest:Connect(function()
+    if getgenv().InfiniteJumpEnabled then
+        local hum = game.Players.LocalPlayer.Character
+        if hum then
+            hum = hum:FindFirstChildWhichIsA("Humanoid")
+            if hum then
+                hum:ChangeState("Jumping")
+            end
+        end
+    end
+end)
+
+MainTab:CreateToggle({
+    Name = "Infinite Jump",
+    CurrentValue = false,
+    Flag = "InfJumpToggle",
+    Callback = function(Value)
+        getgenv().InfiniteJumpEnabled = Value
+        
+        Rayfield:Notify({
+            Title = "Infinite Jump",
+            Content = Value and "ON bro" or "OFF",
+            Duration = 3
+        })
+    end    
+})
+
+MainTab:CreateSlider({
+    Name = "Walkspeed",
+    Range = {16, 250},
+    Increment = 5,
+    Suffix = "studs/sec",
+    CurrentValue = 16,
+    Flag = "WalkspeedSlider",
+    Callback = function(Value)
+        local hum = game.Players.LocalPlayer.Character
+        if hum then
+            hum = hum:FindFirstChildWhichIsA("Humanoid")
+            if hum then
+                hum.WalkSpeed = Value
+            end
+        end
+    end    
+})
+
+MainTab:CreateButton({
+    Name = "SaveGame",
+    Callback = function()
+        Rayfield:Notify({
+            Title = "SaveGame",
+            Content = "Wait",
+            Duration = 4
+        })
+
+        local Params = { 
+            RepoURL = "https://raw.githubusercontent.com/luau/UniversalSynSaveInstance/main/",
+            SSI = "saveinstance",
+        }
+
+        local synsaveinstance = loadstring(game:HttpGet(Params.RepoURL .. Params.SSI .. ".luau", true), Params.SSI)()
+
+        local CustomOptions = {
+            SafeMode = false,
+            timeout = 15,
+            DecompileJobless = true,
+            ReadMe = false,
+            mode = "full",
+            IgnoreDefaultPlayerScripts = true
+        }
+
+        synsaveinstance(CustomOptions)
+
+        Rayfield:Notify({
+            Title = "SaveGame",
+            Content = "Done",
+            Duration = 5
+        })
+    end
+})
+
+MainTab:CreateLabel("by Lumin")
